@@ -135,21 +135,50 @@
       });
 
     // Valorant (optioneel)
-    fetch(valUrl)
-      .then(r => (r.ok ? r.json() : null))
-      .then(v => {
-        if (!v) return;
-        setText("val-rank", "Rank", v.rank);
-        setText("val-kd", "K/D", v.kd);
-        setText("val-win", "Winrate", v.winrate);
-        setText("val-matches", "Matches", v.matches);
-        setText("val-agent", "Top Agent", v.topAgent);
+   // ===== Valorant via Tracker.gg (met filters) =====
+// Jouw Riot ID:
+const RIOT_ID = "Back to Draxon#hoi";
 
-        // Toon kaart en verberg hint zodra data bestaat
-        document.getElementById("val-card").classList.remove("hidden");
-        document.getElementById("val-hint").classList.add("hidden");
-      })
-      .catch(() => {/* laat de hint staan */});
+// Optioneel filteren zoals je link: platform=pc&playlist=competitive&season=5adc33fa-4f30-2899-f131-6fba64c5dd3a
+const PLAYLIST = "competitive"; // laat leeg ("") als je niet wilt filteren
+const SEASON   = "5adc33fa-4f30-2899-f131-6fba64c5dd3a"; // laat leeg ("") als je niet wilt filteren
+
+async function maybeBuildValorant() {
+  const TRN = process.env.TRN_API_KEY;
+  if (!TRN) return null; // geen key → sla over
+
+  const encoded = encodeURIComponent(RIOT_ID);
+  const base = "https://public-api.tracker.gg/v2/valorant/standard/profile/riot";
+
+  // Querystring opbouwen (alleen toevoegen als ingevuld)
+  const qs = new URLSearchParams();
+  if (PLAYLIST) qs.set("playlist", PLAYLIST);
+  if (SEASON)   qs.set("season", SEASON);
+  const suffix = qs.toString() ? `?${qs.toString()}` : "";
+
+  // Profiel/overview
+  const prof = await getJSON(`${base}/${encoded}${suffix}`, {
+    headers: { "TRN-Api-Key": TRN }
+  });
+  const seg = prof?.data?.segments?.[0]?.stats || {};
+
+  // Top agent
+  const agents = await getJSON(`${base}/${encoded}/segments/agent${suffix}`, {
+    headers: { "TRN-Api-Key": TRN }
+  });
+  const topAgent = agents?.data?.[0]?.metadata?.name ?? null;
+
+  return {
+    generatedAt: nowISO,
+    riotId: RIOT_ID,
+    filters: { playlist: PLAYLIST || null, season: SEASON || null },
+    rank: seg?.rank?.metadata?.tierName ?? null,
+    kd: seg?.kd?.displayValue ?? null,
+    winrate: seg?.winPercentage?.displayValue ?? null,
+    matches: seg?.matchesPlayed?.displayValue ?? null,
+    topAgent
+  };
+}
   </script>
 </body>
 </html>
