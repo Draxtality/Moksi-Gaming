@@ -2,94 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Team Draxon</title>
-  <style>
-    body {
-      background: #121212;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      text-align: center;
-    }
-    h1 {
-      color: #f5f5f5;
-      margin-bottom: 2rem;
-    }
-    .team-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
-    .player-card {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 1.5rem;
-      width: 250px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
-    }
-    .player-card h2 {
-      margin-top: 0;
-      color: #00bcd4;
-    }
-    .stat {
-      margin: 0.5rem 0;
-      font-size: 1.1rem;
-    }
-  </style>
+  <title>Moksi Gaming Test</title>
 </head>
-<body>
-  <h1>Team Draxon</h1>
-  <div class="team-container">
-    <div class="player-card" id="draxon">
-      <h2>Draxon</h2>
-      <p class="stat matches">Matches: …</p>
-      <p class="stat winrate">Winrate: …</p>
-      <p class="stat hero">Fav. Hero: …</p>
-    </div>
-    <div class="player-card" id="divano">
-      <h2>Divano</h2>
-      <p class="stat matches">Matches: …</p>
-      <p class="stat winrate">Winrate: …</p>
-      <p class="stat hero">Fav. Hero: …</p>
-    </div>
-    <div class="player-card" id="evilA">
-      <h2>Evil A</h2>
-      <p class="stat matches">Matches: …</p>
-      <p class="stat winrate">Winrate: …</p>
-      <p class="stat hero">Fav. Hero: …</p>
-    </div>
-  </div>
-
-  <script>
-    const players = {
-      draxon: "08aca0ad-a6ef-46c5-a765-e1b3abf659fb",
-      divano: "08c97baa-7354-4b77-8e54-46c672fab7eb",
-      evilA: "cb75bec9-455d-4fd5-bb34-917780a8cfc4"
-    };
-
-    Object.entries(players).forEach(([name, id]) => {
-      // General stats
-      fetch(`https://omeda.city/players/${id}/statistics.json`)
-        .then(res => res.json())
-        .then(data => {
-          document.querySelector(`#${name} .matches`).textContent =
-            `Matches: ${data.matches_played}`;
-          document.querySelector(`#${name} .winrate`).textContent =
-            `Winrate: ${data.win_rate}%`;
-        });
-
-      // Hero stats (get top hero)
-      fetch(`https://omeda.city/players/${id}/hero_statistics.json?time_frame=ALL`)
-        .then(res => res.json())
-        .then(heroData => {
-          const topHero = heroData[0]?.hero_name || "—";
-          document.querySelector(`#${name} .hero`).textContent =
-            `Fav. Hero: ${topHero}`;
-        });
-    });
-  </script>
+<body style="background:#121212; color:#eee; font-family:sans-serif; text-align:center; padding-top:20%;">
+  <h1>Moksi Gaming</h1>
+  <p>Dit is een testpagina om te checken of GitHub Pages werkt.</p>
 </body>
 </html>
