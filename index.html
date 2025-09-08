@@ -2,182 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Moksi Gaming</title>
+  <title>Draxon – Predecessor Dashboard</title>
   <style>
     body {
       background: #121212;
       color: #eee;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding-top: 80px;
+      padding: 2rem;
       text-align: center;
-    }
-    /* Header */
-    .main-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #1e1e1e;
-      border-bottom: 2px solid #00bcd4;
-      font-size: 1.8rem;
-      font-weight: bold;
-      text-align: center;
-      padding: 1rem 0;
-      z-index: 1000;
     }
     h1 {
-      color: #f5f5f5;
-      margin: 2rem 0 1rem;
+      color: #00bcd4;
+      margin-bottom: 1rem;
     }
-    .team-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-    }
-    .player-card {
+    .card {
       background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 10px;
       padding: 1.5rem;
-      width: 280px;
+      margin: 1rem auto;
+      width: 400px;
       box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      text-align: left;
     }
-    .player-card h2 {
+    .card h2 {
       margin-top: 0;
-      margin-bottom: 1rem;
       color: #00bcd4;
     }
-    .stat {
-      margin: 0.5rem 0;
-      font-size: 1.1rem;
-    }
-    .banner {
-      margin: 3rem auto;
-      padding: 1.5rem;
-      background: linear-gradient(90deg, #00bcd4, #9c27b0);
-      border-radius: 8px;
-      width: 80%;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-    .banner h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #fff;
-    }
+    .stat { margin: 0.4rem 0; }
   </style>
 </head>
 <body>
-  <header class="main-header">Moksi Gaming</header>
+  <h1>Draxon – Predecessor Dashboard</h1>
 
-  <!-- Predecessor Section -->
-  <h1>Predecessor Stats</h1>
-  <div class="team-container">
-    <div class="player-card" id="draxon">
-      <h2>Draxon</h2>
-      <p class="stat matches">Matches: loading…</p>
-      <p class="stat winrate">Winrate: loading…</p>
-      <p class="stat hero">Fav. Hero: loading…</p>
-    </div>
-    <div class="player-card" id="divano">
-      <h2>Divano</h2>
-      <p class="stat matches">Matches: loading…</p>
-      <p class="stat winrate">Winrate: loading…</p>
-      <p class="stat hero">Fav. Hero: loading…</p>
-    </div>
-    <div class="player-card" id="evilA">
-      <h2>Evil A</h2>
-      <p class="stat matches">Matches: loading…</p>
-      <p class="stat winrate">Winrate: loading…</p>
-      <p class="stat hero">Fav. Hero: loading…</p>
-    </div>
+  <!-- Algemene stats -->
+  <div class="card" id="general">
+    <h2>General Stats</h2>
+    <p class="stat matches">Matches: loading…</p>
+    <p class="stat winrate">Winrate: loading…</p>
+    <p class="stat kda">Average KDA: loading…</p>
+    <p class="stat hours">Hours Played: loading…</p>
   </div>
 
-  <div class="banner"><h2>Switching Gear → Valorant Stats</h2></div>
+  <!-- Hero stats -->
+  <div class="card" id="heroes">
+    <h2>Top Hero</h2>
+    <p class="stat hero">Fav. Hero: loading…</p>
+    <p class="stat hero-matches">Matches with Hero: loading…</p>
+    <p class="stat hero-winrate">Winrate with Hero: loading…</p>
+  </div>
 
-  <!-- Valorant Section -->
-  <h1>Valorant Stats</h1>
-  <div class="team-container">
-    <div class="player-card" id="val-draxon">
-      <h2>Draxon</h2>
-      <p class="stat rank">Rank: loading…</p>
-      <p class="stat kd">K/D: loading…</p>
-      <p class="stat winrate">Winrate: loading…</p>
-      <p class="stat matches">Matches: loading…</p>
-      <p class="stat agent">Top Agent: loading…</p>
-    </div>
+  <!-- Laatste match -->
+  <div class="card" id="lastmatch">
+    <h2>Last Match</h2>
+    <p class="stat match-id">Match ID: loading…</p>
+    <p class="stat mode">Mode: loading…</p>
+    <p class="stat hero-played">Hero Played: loading…</p>
+    <p class="stat result">Result: loading…</p>
   </div>
 
   <script>
-    // ===== Predecessor Stats =====
-    const predPlayers = {
-      draxon: "08aca0ad-a6ef-46c5-a765-e1b3abf659fb",
-      divano: "08c97baa-7354-4b77-8e54-46c672fab7eb",
-      evilA: "cb75bec9-455d-4fd5-bb34-917780a8cfc4"
-    };
+    const playerId = "08aca0ad-a6ef-46c5-a765-e1b3abf659fb";
 
-    Object.entries(predPlayers).forEach(([name, id]) => {
-      fetch(`https://omeda.city/players/${id}/statistics.json`)
-        .then(res => res.json())
-        .then(data => {
-          document.querySelector(`#${name} .matches`).textContent =
-            `Matches: ${data.matches_played}`;
-          document.querySelector(`#${name} .winrate`).textContent =
-            `Winrate: ${data.win_rate}%`;
-        });
-
-      fetch(`https://omeda.city/players/${id}/hero_statistics.json?time_frame=ALL`)
-        .then(res => res.json())
-        .then(heroData => {
-          const topHero = heroData[0]?.hero_name || "—";
-          document.querySelector(`#${name} .hero`).textContent =
-            `Fav. Hero: ${topHero}`;
-        });
-    });
-
-    // ===== Valorant Stats (Draxon) =====
-    const valorantPlayers = {
-      draxon: "Back to Draxon#hoi"
-    };
-    const API_KEY = "5f4d5161-ebde-41c1-94a2-6ae7c04eda3b";
-
-    Object.entries(valorantPlayers).forEach(([name, riotId]) => {
-      const encodedId = encodeURIComponent(riotId);
-
-      // General stats
-      fetch(`https://public-api.tracker.gg/v2/valorant/standard/profile/riot/${encodedId}`, {
-        headers: { "TRN-Api-Key": API_KEY }
+    // ===== Algemene stats =====
+    fetch(`https://omeda.city/players/${playerId}/statistics.json?time_frame=ALL`)
+      .then(res => res.json())
+      .then(data => {
+        document.querySelector("#general .matches").textContent = `Matches: ${data.matches_played}`;
+        document.querySelector("#general .winrate").textContent = `Winrate: ${data.win_rate}%`;
+        document.querySelector("#general .kda").textContent = `Average KDA: ${data.average_kda}`;
+        document.querySelector("#general .hours").textContent = `Hours Played: ${data.total_playtime_hours}`;
       })
-        .then(res => res.json())
-        .then(data => {
-          const stats = data.data.segments[0].stats;
-          document.querySelector(`#val-${name} .rank`).textContent =
-            `Rank: ${stats.rank.metadata.tierName}`;
-          document.querySelector(`#val-${name} .kd`).textContent =
-            `K/D: ${stats.kd.displayValue}`;
-          document.querySelector(`#val-${name} .winrate`).textContent =
-            `Winrate: ${stats.winPercentage.displayValue}`;
-          document.querySelector(`#val-${name} .matches`).textContent =
-            `Matches: ${stats.matchesPlayed.displayValue}`;
-        });
+      .catch(err => console.error("General stats error:", err));
 
-      // Top agent
-      fetch(`https://public-api.tracker.gg/v2/valorant/standard/profile/riot/${encodedId}/segments/agent`, {
-        headers: { "TRN-Api-Key": API_KEY }
+    // ===== Hero stats =====
+    fetch(`https://omeda.city/players/${playerId}/hero_statistics.json?time_frame=ALL`)
+      .then(res => res.json())
+      .then(heroes => {
+        if (heroes.length > 0) {
+          const top = heroes[0];
+          document.querySelector("#heroes .hero").textContent = `Fav. Hero: ${top.hero_name}`;
+          document.querySelector("#heroes .hero-matches").textContent = `Matches with Hero: ${top.matches_played}`;
+          document.querySelector("#heroes .hero-winrate").textContent = `Winrate with Hero: ${top.win_rate}%`;
+        }
       })
-        .then(res => res.json())
-        .then(data => {
-          if (data.data.length > 0) {
-            const topAgent = data.data[0].metadata.name;
-            document.querySelector(`#val-${name} .agent`).textContent =
-              `Top Agent: ${topAgent}`;
-          }
-        })
-        .catch(err => console.error("Agent fetch error:", err));
-    });
+      .catch(err => console.error("Hero stats error:", err));
+
+    // ===== Laatste match =====
+    fetch(`https://omeda.city/players/${playerId}/matches.json?per_page=1`)
+      .then(res => res.json())
+      .then(matches => {
+        if (matches.length > 0) {
+          const last = matches[0];
+          document.querySelector("#lastmatch .match-id").textContent = `Match ID: ${last.match_id}`;
+          document.querySelector("#lastmatch .mode").textContent = `Mode: ${last.game_mode}`;
+          document.querySelector("#lastmatch .hero-played").textContent = `Hero Played: ${last.hero_name}`;
+          document.querySelector("#lastmatch .result").textContent = `Result: ${last.result}`;
+        }
+      })
+      .catch(err => console.error("Last match error:", err));
   </script>
 </body>
 </html>
