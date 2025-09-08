@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <title>Moksi Gaming — Draxon Dashboard</title>
@@ -79,18 +79,19 @@
       <p class="stat" id="val-win">Winrate: </p>
       <p class="stat" id="val-matches">Matches: </p>
       <p class="stat" id="val-agent">Top Agent: </p>
+      <p class="stat" id="val-playlist">Playlist: </p>
+      <p class="stat" id="val-season">Season: </p>
     </div>
     <div class="card" id="val-hint">
       <h2>Heads up</h2>
-      <p class="stat muted">Valorant-data verschijnt hier zodra je Action een <code>data/valorant_draxon.json</code> heeft weggeschreven.</p>
+      <p class="stat muted">Valorant-data verschijnt hier zodra je Action <code>data/valorant_draxon.json</code> heeft weggeschreven (met je filters).</p>
     </div>
   </div>
 
   <footer id="updated" class="muted">Updated: —</footer>
 
   <script>
-    // Leest lokale JSON-bestanden die door je GitHub Action zijn weggeschreven.
-    // Pad is relatief, dus werkt op project pages zoals /Moksi-Gaming/
+    // Lokale JSON-bestanden (gemaakt door je GitHub Action)
     const predUrl = "./data/predecessor_draxon.json";
     const valUrl  = "./data/valorant_draxon.json";
 
@@ -100,6 +101,17 @@
       if (!el) return;
       const val = (value ?? value === 0) ? value : "N/A";
       el.textContent = suffix ? `${label}: ${val}${val!=="N/A" ? suffix : ""}` : `${label}: ${val}`;
+    }
+
+    // Updated timestamp helper (pakt de nieuwste van pred/val)
+    let lastUpdated = null;
+    function updateStamp(newISO) {
+      if (!newISO) return;
+      const cur = lastUpdated ? new Date(lastUpdated).getTime() : 0;
+      const nxt = new Date(newISO).getTime();
+      if (nxt > cur) lastUpdated = newISO;
+      document.getElementById("updated").textContent =
+        `Updated: ${new Date(lastUpdated).toLocaleString()}`;
     }
 
     // Predecessor
@@ -123,62 +135,30 @@
         setText("match-hero", "Hero Played", d?.lastMatch?.hero);
         setText("match-result", "Result", d?.lastMatch?.result);
 
-        // Updated timestamp
-        const stamp = d?.generatedAt ? new Date(d.generatedAt).toLocaleString() : "—";
-        document.getElementById("updated").textContent = `Updated: ${stamp}`;
+        updateStamp(d?.generatedAt);
       })
-      .catch(() => {
-        // Fallbacks als JSON (nog) niet bestaat
-        ["matches","winrate","kda","hours","hero","hero-matches","hero-winrate","match-id","match-mode","match-hero","match-result"]
-          .forEach(id => setText(id, document.getElementById(id).textContent.replace(/:.*/,""), null));
-        document.getElementById("updated").textContent = `Updated: —`;
-      });
+      .catch(() => { /* laat labels leeg/N/A; JSON komt later */ });
 
-    // Valorant (optioneel)
-   // ===== Valorant via Tracker.gg (met filters) =====
-// Jouw Riot ID:
-const RIOT_ID = "Back to Draxon#hoi";
+    // Valorant (met filters vanuit je JSON)
+    fetch(valUrl)
+      .then(r => (r.ok ? r.json() : null))
+      .then(v => {
+        if (!v) return;
+        setText("val-rank", "Rank", v.rank);
+        setText("val-kd", "K/D", v.kd);
+        setText("val-win", "Winrate", v.winrate);
+        setText("val-matches", "Matches", v.matches);
+        setText("val-agent", "Top Agent", v.topAgent);
+        setText("val-playlist", "Playlist", v?.filters?.playlist || "N/A");
+        setText("val-season", "Season", v?.filters?.season || "N/A");
 
-// Optioneel filteren zoals je link: platform=pc&playlist=competitive&season=5adc33fa-4f30-2899-f131-6fba64c5dd3a
-const PLAYLIST = "competitive"; // laat leeg ("") als je niet wilt filteren
-const SEASON   = "5adc33fa-4f30-2899-f131-6fba64c5dd3a"; // laat leeg ("") als je niet wilt filteren
+        // Toon kaart en verberg hint zodra data bestaat
+        document.getElementById("val-card").classList.remove("hidden");
+        document.getElementById("val-hint").classList.add("hidden");
 
-async function maybeBuildValorant() {
-  const TRN = process.env.TRN_API_KEY;
-  if (!TRN) return null; // geen key → sla over
-
-  const encoded = encodeURIComponent(RIOT_ID);
-  const base = "https://public-api.tracker.gg/v2/valorant/standard/profile/riot";
-
-  // Querystring opbouwen (alleen toevoegen als ingevuld)
-  const qs = new URLSearchParams();
-  if (PLAYLIST) qs.set("playlist", PLAYLIST);
-  if (SEASON)   qs.set("season", SEASON);
-  const suffix = qs.toString() ? `?${qs.toString()}` : "";
-
-  // Profiel/overview
-  const prof = await getJSON(`${base}/${encoded}${suffix}`, {
-    headers: { "TRN-Api-Key": TRN }
-  });
-  const seg = prof?.data?.segments?.[0]?.stats || {};
-
-  // Top agent
-  const agents = await getJSON(`${base}/${encoded}/segments/agent${suffix}`, {
-    headers: { "TRN-Api-Key": TRN }
-  });
-  const topAgent = agents?.data?.[0]?.metadata?.name ?? null;
-
-  return {
-    generatedAt: nowISO,
-    riotId: RIOT_ID,
-    filters: { playlist: PLAYLIST || null, season: SEASON || null },
-    rank: seg?.rank?.metadata?.tierName ?? null,
-    kd: seg?.kd?.displayValue ?? null,
-    winrate: seg?.winPercentage?.displayValue ?? null,
-    matches: seg?.matchesPlayed?.displayValue ?? null,
-    topAgent
-  };
-}
+        updateStamp(v?.generatedAt);
+      })
+      .catch(() => { /* hint zichtbaar laten */ });
   </script>
 </body>
 </html>
