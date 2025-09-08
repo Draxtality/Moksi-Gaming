@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2025-01-01T12:00:00.000Z",
+  "playerId": "08aca0ad-a6ef-46c5-a765-e1b3abf659fb",
+  "general": {
+    "matches": 232,
+    "winrate": 50.0,
+    "averageKDA": 2.43,
+    "hoursPlayed": 116
+  },
+  "topHero": {
+    "name": "Grux",
+    "matches": 68,
+    "winrate": 54.3
+  },
+  "lastMatch": {
+    "matchId": "1234567890",
+    "mode": "ranked",
+    "hero": "Grux",
+    "result": "win"
+  }
+}
