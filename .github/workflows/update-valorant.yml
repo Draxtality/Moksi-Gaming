@@ -1,7 +1,7 @@
 name: Update Valorant stats
 
 on:
-  workflow_dispatch:      # handmatig starten
+  workflow_dispatch:
   schedule:
     - cron: "0 * * * *"   # elk uur (UTC)
 
@@ -20,22 +20,9 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Verify repo layout & secret
-        run: |
-          echo "== Files in repo =="
-          ls -la
-          echo "== Files in scripts =="
-          ls -la scripts || true
-          if [ -z "${{ secrets.TRN_API_KEY }}" ]; then
-            echo "::error::TRN_API_KEY repo secret is missing"
-            exit 1
-          else
-            echo "Secret TRN_API_KEY is set ✅"
-          fi
-
-      - name: Generate valorant JSON
+      - name: Generate valorant JSON (with TRN -> HenrikDev fallback)
         env:
-          TRN_API_KEY: ${{ secrets.TRN_API_KEY }}
+          TRN_API_KEY: ${{ secrets.TRN_API_KEY }}   # mag leeg zijn
         run: node scripts/valorant_update.mjs
 
       - name: Commit & push data
