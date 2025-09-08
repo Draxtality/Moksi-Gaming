@@ -39,69 +39,70 @@
   <!-- Algemene stats -->
   <div class="card" id="general">
     <h2>General Stats</h2>
-    <p class="stat matches">Matches: loading…</p>
-    <p class="stat winrate">Winrate: loading…</p>
-    <p class="stat kda">Average KDA: loading…</p>
-    <p class="stat hours">Hours Played: loading…</p>
+    <p id="matches">Matches:</p>
+    <p id="winrate">Winrate:</p>
+    <p id="kda">Average KDA:</p>
+    <p id="hours">Hours Played:</p>
   </div>
 
   <!-- Hero stats -->
   <div class="card" id="heroes">
     <h2>Top Hero</h2>
-    <p class="stat hero">Fav. Hero: loading…</p>
-    <p class="stat hero-matches">Matches with Hero: loading…</p>
-    <p class="stat hero-winrate">Winrate with Hero: loading…</p>
+    <p id="hero">Fav. Hero:</p>
+    <p id="hero-matches">Matches with Hero:</p>
+    <p id="hero-winrate">Winrate with Hero:</p>
   </div>
 
   <!-- Laatste match -->
   <div class="card" id="lastmatch">
     <h2>Last Match</h2>
-    <p class="stat match-id">Match ID: loading…</p>
-    <p class="stat mode">Mode: loading…</p>
-    <p class="stat hero-played">Hero Played: loading…</p>
-    <p class="stat result">Result: loading…</p>
+    <p id="match-id">Match ID:</p>
+    <p id="match-mode">Mode:</p>
+    <p id="match-hero">Hero Played:</p>
+    <p id="match-result">Result:</p>
   </div>
 
   <script>
     const playerId = "08aca0ad-a6ef-46c5-a765-e1b3abf659fb";
 
-    // ===== Algemene stats =====
+    // Algemene stats
     fetch(`https://omeda.city/players/${playerId}/statistics.json?time_frame=ALL`)
       .then(res => res.json())
       .then(data => {
-        document.querySelector("#general .matches").textContent = `Matches: ${data.matches_played}`;
-        document.querySelector("#general .winrate").textContent = `Winrate: ${data.win_rate}%`;
-        document.querySelector("#general .kda").textContent = `Average KDA: ${data.average_kda}`;
-        document.querySelector("#general .hours").textContent = `Hours Played: ${data.total_playtime_hours}`;
-      })
-      .catch(err => console.error("General stats error:", err));
+        document.getElementById("matches").textContent = `Matches: ${data.matches_played ?? 'N/A'}`;
+        document.getElementById("winrate").textContent = `Winrate: ${data.win_rate ?? 'N/A'}%`;
+        document.getElementById("kda").textContent = `Average KDA: ${data.average_kda ?? 'N/A'}`;
+        document.getElementById("hours").textContent = `Hours Played: ${data.total_playtime_hours ?? 'N/A'}`;
+      });
 
-    // ===== Hero stats =====
+    // Hero stats
     fetch(`https://omeda.city/players/${playerId}/hero_statistics.json?time_frame=ALL`)
       .then(res => res.json())
       .then(heroes => {
         if (heroes.length > 0) {
           const top = heroes[0];
-          document.querySelector("#heroes .hero").textContent = `Fav. Hero: ${top.hero_name}`;
-          document.querySelector("#heroes .hero-matches").textContent = `Matches with Hero: ${top.matches_played}`;
-          document.querySelector("#heroes .hero-winrate").textContent = `Winrate with Hero: ${top.win_rate}%`;
+          document.getElementById("hero").textContent = `Fav. Hero: ${top.hero_name ?? 'N/A'}`;
+          document.getElementById("hero-matches").textContent = `Matches with Hero: ${top.matches_played ?? 'N/A'}`;
+          document.getElementById("hero-winrate").textContent = `Winrate with Hero: ${top.win_rate ?? 'N/A'}%`;
+        } else {
+          document.getElementById("hero").textContent = "Fav. Hero: N/A";
         }
-      })
-      .catch(err => console.error("Hero stats error:", err));
+      });
 
-    // ===== Laatste match =====
+    // Laatste match
     fetch(`https://omeda.city/players/${playerId}/matches.json?per_page=1`)
       .then(res => res.json())
       .then(matches => {
         if (matches.length > 0) {
           const last = matches[0];
-          document.querySelector("#lastmatch .match-id").textContent = `Match ID: ${last.match_id}`;
-          document.querySelector("#lastmatch .mode").textContent = `Mode: ${last.game_mode}`;
-          document.querySelector("#lastmatch .hero-played").textContent = `Hero Played: ${last.hero_name}`;
-          document.querySelector("#lastmatch .result").textContent = `Result: ${last.result}`;
+          document.getElementById("match-id").textContent = `Match ID: ${last.match_id ?? 'N/A'}`;
+          document.getElementById("match-mode").textContent = `Mode: ${last.game_mode ?? 'N/A'}`;
+          document.getElementById("match-hero").textContent = `Hero Played: ${last.hero_name ?? 'N/A'}`;
+          document.getElementById("match-result").textContent = `Result: ${last.result ?? 'N/A'}`;
+        } else {
+          document.getElementById("match-id").textContent = "Match ID: N/A";
         }
-      })
-      .catch(err => console.error("Last match error:", err));
+      });
   </script>
 </body>
 </html>
