@@ -9,7 +9,7 @@
       color: #eee;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding-top: 80px; /* ruimte voor vaste header */
+      padding-top: 80px;
       text-align: center;
     }
     /* Header */
@@ -20,13 +20,11 @@
       width: 100%;
       background: #1e1e1e;
       border-bottom: 2px solid #00bcd4;
-      color: #fff;
       font-size: 1.8rem;
       font-weight: bold;
       text-align: center;
       padding: 1rem 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
     }
     h1 {
       color: #f5f5f5;
@@ -43,8 +41,8 @@
       background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 10px;
-      padding: 1rem;
-      width: 350px;
+      padding: 1.5rem;
+      width: 280px;
       box-shadow: 0 0 10px rgba(0,0,0,0.6);
     }
     .player-card h2 {
@@ -52,13 +50,7 @@
       margin-bottom: 1rem;
       color: #00bcd4;
     }
-    iframe {
-      border: none;
-      border-radius: 8px;
-      width: 100%;
-      height: 400px;
-    }
-    /* Banner */
+    .stat { margin: 0.5rem 0; font-size: 1.1rem; }
     .banner {
       margin: 3rem auto;
       padding: 1.5rem;
@@ -68,57 +60,95 @@
       text-align: center;
       box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
-    .banner h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #fff;
-      letter-spacing: 1px;
-    }
+    .banner h2 { margin: 0; font-size: 1.5rem; color: #fff; }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="main-header">
-    Moksi Gaming
-  </header>
+  <header class="main-header">Moksi Gaming</header>
 
   <!-- Predecessor Section -->
   <h1>Predecessor Stats</h1>
   <div class="team-container">
-    <div class="player-card">
+    <div class="player-card" id="draxon">
       <h2>Draxon</h2>
-      <iframe src="https://omeda.city/players/08aca0ad-a6ef-46c5-a765-e1b3abf659fb"></iframe>
+      <p class="stat matches">Matches: loading…</p>
+      <p class="stat winrate">Winrate: loading…</p>
+      <p class="stat hero">Fav. Hero: loading…</p>
     </div>
-    <div class="player-card">
+    <div class="player-card" id="divano">
       <h2>Divano</h2>
-      <iframe src="https://omeda.city/players/08c97baa-7354-4b77-8e54-46c672fab7eb"></iframe>
+      <p class="stat matches">Matches: loading…</p>
+      <p class="stat winrate">Winrate: loading…</p>
+      <p class="stat hero">Fav. Hero: loading…</p>
     </div>
-    <div class="player-card">
+    <div class="player-card" id="evilA">
       <h2>Evil A</h2>
-      <iframe src="https://omeda.city/players/cb75bec9-455d-4fd5-bb34-917780a8cfc4"></iframe>
+      <p class="stat matches">Matches: loading…</p>
+      <p class="stat winrate">Winrate: loading…</p>
+      <p class="stat hero">Fav. Hero: loading…</p>
     </div>
   </div>
 
-  <!-- Banner -->
-  <div class="banner">
-    <h2>Switching Gear → Valorant Stats</h2>
-  </div>
+  <div class="banner"><h2>Switching Gear → Valorant Stats</h2></div>
 
-  <!-- Valorant Section -->
+  <!-- Valorant Section (alleen Draxon) -->
   <h1>Valorant Stats</h1>
   <div class="team-container">
-    <div class="player-card">
+    <div class="player-card" id="val-draxon">
       <h2>Draxon</h2>
-      <iframe src="https://tracker.gg/valorant/profile/riot/Back%20to%20Draxon%23hoi/overview"></iframe>
-    </div>
-    <div class="player-card">
-      <h2>Divano</h2>
-      <iframe src="HIER_LINK_NAAR_DIVANO"></iframe>
-    </div>
-    <div class="player-card">
-      <h2>Evil A</h2>
-      <iframe src="HIER_LINK_NAAR_EVIL_A"></iframe>
+      <p class="stat rank">Rank: loading…</p>
+      <p class="stat kd">K/D: loading…</p>
+      <p class="stat winrate">Winrate: loading…</p>
     </div>
   </div>
+
+  <script>
+    // ===== Predecessor Stats =====
+    const predPlayers = {
+      draxon: "08aca0ad-a6ef-46c5-a765-e1b3abf659fb",
+      divano: "08c97baa-7354-4b77-8e54-46c672fab7eb",
+      evilA: "cb75bec9-455d-4fd5-bb34-917780a8cfc4"
+    };
+
+    Object.entries(predPlayers).forEach(([name, id]) => {
+      fetch(`https://omeda.city/players/${id}/statistics.json`)
+        .then(res => res.json())
+        .then(data => {
+          document.querySelector(`#${name} .matches`).textContent = `Matches: ${data.matches_played}`;
+          document.querySelector(`#${name} .winrate`).textContent = `Winrate: ${data.win_rate}%`;
+        });
+      fetch(`https://omeda.city/players/${id}/hero_statistics.json?time_frame=ALL`)
+        .then(res => res.json())
+        .then(heroData => {
+          const topHero = heroData[0]?.hero_name || "—";
+          document.querySelector(`#${name} .hero`).textContent = `Fav. Hero: ${topHero}`;
+        });
+    });
+
+    // ===== Valorant Stats (alleen Draxon) =====
+    const valorantPlayers = {
+      draxon: "Back to Draxon#hoi"
+    };
+    const API_KEY = "JOUW_API_KEY_HIER"; // Vul hier je Tracker.gg API key in
+
+    Object.entries(valorantPlayers).forEach(([name, riotId]) => {
+      const encodedId = encodeURIComponent(riotId);
+      fetch(`https://public-api.tracker.gg/v2/valorant/standard/profile/riot/${encodedId}`, {
+        headers: { "TRN-Api-Key": API_KEY }
+      })
+        .then(res => res.json())
+        .then(data => {
+          const stats = data.data.segments[0].stats;
+          document.querySelector(`#val-${name} .rank`).textContent = `Rank: ${stats.rank.metadata.tierName}`;
+          document.querySelector(`#val-${name} .kd`).textContent = `K/D: ${stats.kd.displayValue}`;
+          document.querySelector(`#val-${name} .winrate`).textContent = `Winrate: ${stats.winPercentage.displayValue}`;
+        })
+        .catch(err => {
+          document.querySelector(`#val-${name} .rank`).textContent = "Rank: N/A";
+          document.querySelector(`#val-${name} .kd`).textContent = "K/D: N/A";
+          document.querySelector(`#val-${name} .winrate`).textContent = "Winrate: N/A";
+        });
+    });
+  </script>
 </body>
 </html>
