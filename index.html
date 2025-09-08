@@ -2,163 +2,82 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <title>Moksi Gaming — Draxon Dashboard</title>
+  <title>Moksi Gaming — Valorant (Draxon)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root { --bg:#121212; --card:#1e1e1e; --ink:#eee; --accent:#00bcd4; --edge:#333; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--ink); font-family: Arial, sans-serif;
-      padding-top: 80px; text-align: center;
-    }
-    header.main-header {
-      position: fixed; top: 0; left: 0; width: 100%;
-      background: var(--card); border-bottom: 2px solid var(--accent);
-      padding: 1rem 0; font-weight: 700; font-size: 1.1rem; z-index: 10;
-      box-shadow: 0 2px 10px rgba(0,0,0,.6);
-    }
-    h1 { margin: 2rem 0 1rem; color: #f5f5f5; }
-    .grid {
-      display: grid; gap: 1.25rem; width: min(1100px, 92vw); margin: 0 auto 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-    .card {
-      background: var(--card); border: 1px solid var(--edge); border-radius: 12px;
-      padding: 1.25rem; text-align: left; box-shadow: 0 0 10px rgba(0,0,0,.6);
-    }
-    .card h2 { margin: 0 0 .75rem; color: var(--accent); font-size: 1.1rem; }
-    .stat { margin: .35rem 0; font-size: 1rem; }
-    .banner {
-      margin: 2.25rem auto; width: min(1100px, 92vw);
-      background: linear-gradient(90deg, var(--accent), #9c27b0);
-      color: #fff; padding: 1rem 1.25rem; border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,.5); text-align: center; font-weight: 600;
-    }
-    .muted { opacity: .85; font-size: .95rem; }
-    .hidden { display: none; }
-    footer { margin: 2rem 0 1rem; color: #bbb; font-size: .9rem; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,sans-serif; padding-top:72px; text-align:center; }
+    header { position:fixed; top:0; left:0; right:0; background:var(--card); border-bottom:2px solid var(--accent); padding:14px 0; font-weight:700; box-shadow:0 2px 10px rgba(0,0,0,.5); }
+    h1 { margin:24px 0 12px; }
+    .wrap { width:min(900px,92vw); margin:0 auto 32px; }
+    .card { background:var(--card); border:1px solid var(--edge); border-radius:12px; padding:16px 18px; text-align:left; box-shadow:0 0 10px rgba(0,0,0,.5); }
+    .card h2 { margin:0 0 10px; color:var(--accent); font-size:1.1rem; }
+    .stat { margin:.35rem 0; }
+    footer { margin:20px 0; color:#bbb; font-size:.9rem; }
   </style>
 </head>
 <body>
-  <header class="main-header">Moksi Gaming — Draxon</header>
+  <header>Moksi Gaming — Valorant (Draxon)</header>
 
-  <h1>Predecessor Stats</h1>
-  <div class="grid" id="pred-grid">
-    <div class="card" id="general">
-      <h2>General</h2>
-      <p class="stat" id="matches">Matches: </p>
-      <p class="stat" id="winrate">Winrate: </p>
-      <p class="stat" id="kda">Average KDA: </p>
-      <p class="stat" id="hours">Hours Played: </p>
-    </div>
-
-    <div class="card" id="heroes">
-      <h2>Top Hero</h2>
-      <p class="stat" id="hero">Fav. Hero: </p>
-      <p class="stat" id="hero-matches">Matches with Hero: </p>
-      <p class="stat" id="hero-winrate">Winrate with Hero: </p>
-    </div>
-
-    <div class="card" id="lastmatch">
-      <h2>Last Match</h2>
-      <p class="stat" id="match-id">Match ID: </p>
-      <p class="stat" id="match-mode">Mode: </p>
-      <p class="stat" id="match-hero">Hero Played: </p>
-      <p class="stat" id="match-result">Result: </p>
+  <div class="wrap">
+    <h1>Valorant Stats</h1>
+    <div class="card">
+      <h2>Profiel</h2>
+      <p class="stat" id="val-rank">Rank:</p>
+      <p class="stat" id="val-kd">K/D:</p>
+      <p class="stat" id="val-win">Winrate:</p>
+      <p class="stat" id="val-matches">Matches:</p>
+      <p class="stat" id="val-agent">Top Agent:</p>
+      <p class="stat" id="val-playlist">Playlist:</p>
+      <p class="stat" id="val-season">Season:</p>
     </div>
   </div>
 
-  <div class="banner">Switching Gear → Valorant</div>
-
-  <h1>Valorant (Draxon)</h1>
-  <div class="grid">
-    <div class="card hidden" id="val-card">
-      <h2>Profile</h2>
-      <p class="stat" id="val-rank">Rank: </p>
-      <p class="stat" id="val-kd">K/D: </p>
-      <p class="stat" id="val-win">Winrate: </p>
-      <p class="stat" id="val-matches">Matches: </p>
-      <p class="stat" id="val-agent">Top Agent: </p>
-      <p class="stat" id="val-playlist">Playlist: </p>
-      <p class="stat" id="val-season">Season: </p>
-    </div>
-    <div class="card" id="val-hint">
-      <h2>Heads up</h2>
-      <p class="stat muted">Valorant-data verschijnt hier zodra je Action <code>data/valorant_draxon.json</code> heeft weggeschreven (met je filters).</p>
-    </div>
-  </div>
-
-  <footer id="updated" class="muted">Updated: —</footer>
+  <footer id="updated">Updated: —</footer>
 
   <script>
-    // Lokale JSON-bestanden (gemaakt door je GitHub Action)
-    const predUrl = "./data/predecessor_draxon.json";
-    const valUrl  = "./data/valorant_draxon.json";
+    // Laadt lokale JSON die door jouw Action / handmatig is geplaatst.
+    const cacheBust = '?v=' + Date.now();
+    const valUrl = './data/valorant_draxon.json' + cacheBust;
 
-    // Helper om label + waarde te zetten met N/A fallback
-    function setText(id, label, value, suffix="") {
+    const isNumeric = (v) => typeof v === 'number' || (!!v && !isNaN(parseFloat(v)));
+    function setText(id, label, value, suffix = '') {
       const el = document.getElementById(id);
       if (!el) return;
-      const val = (value ?? value === 0) ? value : "N/A";
-      el.textContent = suffix ? `${label}: ${val}${val!=="N/A" ? suffix : ""}` : `${label}: ${val}`;
+      let out = 'N/A';
+      if (value !== undefined && value !== null && value !== '') {
+        if (suffix && isNumeric(value) && String(value).indexOf('%') === -1) {
+          out = `${value}${suffix}`;
+        } else {
+          out = value;
+        }
+      }
+      el.textContent = `${label}: ${out}`;
     }
 
-    // Updated timestamp helper (pakt de nieuwste van pred/val)
-    let lastUpdated = null;
-    function updateStamp(newISO) {
-      if (!newISO) return;
-      const cur = lastUpdated ? new Date(lastUpdated).getTime() : 0;
-      const nxt = new Date(newISO).getTime();
-      if (nxt > cur) lastUpdated = newISO;
-      document.getElementById("updated").textContent =
-        `Updated: ${new Date(lastUpdated).toLocaleString()}`;
-    }
-
-    // Predecessor
-    fetch(predUrl)
-      .then(r => r.json())
-      .then(d => {
-        // General
-        setText("matches", "Matches", d?.general?.matches);
-        setText("winrate", "Winrate", d?.general?.winrate, "%");
-        setText("kda", "Average KDA", d?.general?.averageKDA);
-        setText("hours", "Hours Played", d?.general?.hoursPlayed);
-
-        // Top hero
-        setText("hero", "Fav. Hero", d?.topHero?.name);
-        setText("hero-matches", "Matches with Hero", d?.topHero?.matches);
-        setText("hero-winrate", "Winrate with Hero", d?.topHero?.winrate, "%");
-
-        // Last match
-        setText("match-id", "Match ID", d?.lastMatch?.matchId);
-        setText("match-mode", "Mode", d?.lastMatch?.mode);
-        setText("match-hero", "Hero Played", d?.lastMatch?.hero);
-        setText("match-result", "Result", d?.lastMatch?.result);
-
-        updateStamp(d?.generatedAt);
-      })
-      .catch(() => { /* laat labels leeg/N/A; JSON komt later */ });
-
-    // Valorant (met filters vanuit je JSON)
     fetch(valUrl)
-      .then(r => (r.ok ? r.json() : null))
+      .then(r => r.json())
       .then(v => {
-        if (!v) return;
-        setText("val-rank", "Rank", v.rank);
-        setText("val-kd", "K/D", v.kd);
-        setText("val-win", "Winrate", v.winrate);
-        setText("val-matches", "Matches", v.matches);
-        setText("val-agent", "Top Agent", v.topAgent);
-        setText("val-playlist", "Playlist", v?.filters?.playlist || "N/A");
-        setText("val-season", "Season", v?.filters?.season || "N/A");
+        setText('val-rank', 'Rank', v.rank);
+        setText('val-kd', 'K/D', v.kd);
+        setText('val-win', 'Winrate', v.winrate);         // voeg geen extra % toe als het al "52%" is
+        setText('val-matches', 'Matches', v.matches);
+        setText('val-agent', 'Top Agent', v.topAgent);
+        setText('val-playlist', 'Playlist', v?.filters?.playlist || 'N/A');
+        setText('val-season', 'Season', v?.filters?.season || 'N/A');
 
-        // Toon kaart en verberg hint zodra data bestaat
-        document.getElementById("val-card").classList.remove("hidden");
-        document.getElementById("val-hint").classList.add("hidden");
-
-        updateStamp(v?.generatedAt);
+        document.getElementById('updated').textContent =
+          'Updated: ' + (v.generatedAt ? new Date(v.generatedAt).toLocaleString() : '—');
       })
-      .catch(() => { /* hint zichtbaar laten */ });
+      .catch(() => {
+        // Laat labels staan met N/A als het bestand (nog) niet bestaat
+        ['val-rank','val-kd','val-win','val-matches','val-agent','val-playlist','val-season']
+          .forEach(id => {
+            const label = document.getElementById(id).textContent.split(':')[0];
+            document.getElementById(id).textContent = `${label}: N/A`;
+          });
+      });
   </script>
 </body>
 </html>
