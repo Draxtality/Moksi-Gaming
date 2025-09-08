@@ -3,10 +3,10 @@ name: Update Valorant stats
 on:
   workflow_dispatch:      # handmatig starten
   schedule:
-    - cron: "0 * * * *"   # elk heel uur (UTC)
+    - cron: "0 * * * *"   # elk uur (UTC)
 
 permissions:
-  contents: write         # nodig om JSON terug te pushen
+  contents: write
 
 jobs:
   update:
@@ -19,6 +19,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Verify repo layout & secret
+        run: |
+          echo "== Files in repo =="
+          ls -la
+          echo "== Files in scripts =="
+          ls -la scripts || true
+          if [ -z "${{ secrets.TRN_API_KEY }}" ]; then
+            echo "::error::TRN_API_KEY repo secret is missing"
+            exit 1
+          else
+            echo "Secret TRN_API_KEY is set ✅"
+          fi
 
       - name: Generate valorant JSON
         env:
