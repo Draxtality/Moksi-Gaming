@@ -1,28 +1,26 @@
 // scripts/valorant_update.mjs
 import { writeFile, mkdir } from "fs/promises";
 
-// ---- jouw instellingen ----
-const RIOT_ID = "Back to Draxon#hoi";
-const REGION  = "eu";                     // pas aan als nodig: na, eu, ap, kr, latam, br
+// ---- jouw settings ----
+const RIOT_ID  = "Back to Draxon#hoi";
+const REGION   = "eu";                        // eu | na | ap | kr | latam | br
 const PLAYLIST = "competitive";
-const SEASON   = "5adc33fa-4f30-2899-f131-6fba64c5dd3a"; // alleen gebruikt bij TRN
-// ---------------------------
+const SEASON   = "5adc33fa-4f30-2899-f131-6fba64c5dd3a"; // alleen relevant voor TRN
+// -----------------------
 
-const TRN = process.env.TRN_API_KEY;      // mag leeg zijn; dan gaat hij direct naar fallback
+const TRN = process.env.TRN_API_KEY;
 const nowISO = new Date().toISOString();
-
-// hulpfns
-const encodedId = encodeURIComponent(RIOT_ID);
 const [NAME, TAG] = RIOT_ID.split("#");
-const enc = (s) => encodeURIComponent(s ?? "");
 
-async function writeOut(payload) {
+const enc = s => encodeURIComponent(s ?? "");
+
+async function writeOut(payload, note = "") {
   await mkdir("data", { recursive: true });
   await writeFile("data/valorant_draxon.json", JSON.stringify(payload, null, 2));
-  console.log("Wrote data/valorant_draxon.json (source:", payload.source, ")");
+  console.log("Wrote data/valorant_draxon.json", note ? `(${note})` : "");
 }
 
-// -------- 1) Probeer Tracker.gg (met key) --------
+// ---------- 1) Tracker.gg (met key) ----------
 async function fetchFromTRN() {
   if (!TRN) throw new Error("TRN key ontbreekt");
   const qs = new URLSearchParams();
@@ -42,8 +40,7 @@ async function fetchFromTRN() {
 
   async function getJson(url) {
     const res = await fetch(url, { headers });
-    const text = await res.text();
-    let json = null; try { json = JSON.parse(text); } catch {}
+    const txt = await res.text(); let json = null; try { json = JSON.parse(txt); } catch {}
     if (!res.ok) {
       const msg = json?.message || json?.errors?.[0]?.message || res.statusText;
       throw new Error(`${res.status} ${res.statusText} :: ${msg}`);
@@ -54,23 +51,22 @@ async function fetchFromTRN() {
   let lastErr = null;
   for (const base of HOSTS) {
     try {
-      const overview = await getJson(`${base}/${encodedId}${suffix}`);
+      const overview = await getJson(`${base}/${enc(RIOT_ID)}${suffix}`);
       const stats = overview?.data?.segments?.[0]?.stats || {};
       let topAgent = null;
       try {
-        const agents = await getJson(`${base}/${encodedId}/segments/agent${suffix}`);
+        const agents = await getJson(`${base}/${enc(RIOT_ID)}/segments/agent${suffix}`);
         topAgent = agents?.data?.[0]?.metadata?.name ?? null;
       } catch (e) {
         console.warn("TRN agent warning:", e.message);
       }
-
       return {
         generatedAt: nowISO,
         riotId: RIOT_ID,
         filters: { playlist: PLAYLIST || null, season: SEASON || null },
         rank: stats?.rank?.metadata?.tierName ?? null,
         kd: stats?.kd?.displayValue ?? null,
-        winrate: stats?.winPercentage?.displayValue ?? null,   // vaak bv. "52%"
+        winrate: stats?.winPercentage?.displayValue ?? null,
         matches: stats?.matchesPlayed?.displayValue ?? null,
         topAgent,
         source: "TRN"
@@ -83,15 +79,16 @@ async function fetchFromTRN() {
   throw lastErr || new Error("TRN failed");
 }
 
-// -------- 2) Fallback: HenrikDev (geen key) --------
+// ---------- 2) Fallback HenrikDev (geen key) ----------
 async function fetchFromHenrik() {
   const base = "https://api.henrikdev.xyz/valorant";
+
   // Rank / MMR
   const mmrRes = await fetch(`${base}/v1/mmr/${enc(REGION)}/${enc(NAME)}/${enc(TAG)}`);
   if (!mmrRes.ok) throw new Error(`Henrik MMR ${mmrRes.status}`);
   const mmr = await mmrRes.json();
 
-  // Recent matches (competitive), pak er 20 voor KD/winrate/top agent
+  // Recente matches (filter competitive), neem 20
   const matchesRes = await fetch(`${base}/v3/matches/${enc(REGION)}/${enc(NAME)}/${enc(TAG)}?filter=${enc(PLAYLIST)}&size=20`);
   if (!matchesRes.ok) throw new Error(`Henrik matches ${matchesRes.status}`);
   const matchesJ = await matchesRes.json();
@@ -106,7 +103,6 @@ async function fetchFromHenrik() {
     deaths += me.stats?.deaths ?? 0;
     const agent = me.character ?? me?.assets?.agent?.name;
     if (agent) agentCount[agent] = (agentCount[agent] || 0) + 1;
-
     const teamKey = me.team?.toLowerCase?.();
     const teamRes = g?.teams?.[teamKey]?.has_won;
     if (teamRes) wins += 1;
@@ -115,7 +111,6 @@ async function fetchFromHenrik() {
   const winratePct = total > 0 ? Math.round((wins / total) * 100) : null;
   const topAgent = Object.entries(agentCount).sort((a,b) => b[1]-a[1])[0]?.[0] ?? null;
 
-  // rank naam uit mmr
   const rankName =
     mmr?.data?.current_data?.currenttierpatched ||
     mmr?.data?.current_data?.images?.small_text ||
@@ -134,17 +129,38 @@ async function fetchFromHenrik() {
   };
 }
 
-// -------- main --------
-try {
-  let payload = null;
+// ---------- main ----------
+(async () => {
   try {
-    payload = await fetchFromTRN();
-  } catch (e) {
-    console.warn("TRN failed, using HenrikDev fallback:", e.message);
-    payload = await fetchFromHenrik();
+    let payload = null;
+    try {
+      payload = await fetchFromTRN();
+      await writeOut(payload, "TRN");
+    } catch (e1) {
+      console.warn("TRN failed ->", e1.message);
+      try {
+        payload = await fetchFromHenrik();
+        await writeOut(payload, "HenrikDev");
+      } catch (e2) {
+        console.error("HenrikDev failed ->", e2.message);
+        // schrijf placeholder i.p.v. falen
+        await writeOut({
+          generatedAt: nowISO,
+          riotId: RIOT_ID,
+          filters: { playlist: PLAYLIST || null, season: SEASON || null },
+          rank: null, kd: null, winrate: null, matches: null, topAgent: null,
+          source: "none", error: e2.message
+        }, "placeholder");
+      }
+    }
+  } catch (fatal) {
+    // Dit pad zouden we niet meer moeten raken, maar just in case:
+    await writeOut({
+      generatedAt: nowISO,
+      riotId: RIOT_ID,
+      filters: { playlist: PLAYLIST || null, season: SEASON || null },
+      rank: null, kd: null, winrate: null, matches: null, topAgent: null,
+      source: "none", error: fatal.message
+    }, "fatal-placeholder");
   }
-  await writeOut(payload);
-} catch (e) {
-  console.error("Both sources failed:", e);
-  process.exit(1);
-}
+})();
