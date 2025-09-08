@@ -1,108 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Draxon – Predecessor Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Moksi Gaming — Draxon Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root { --bg:#121212; --card:#1e1e1e; --ink:#eee; --accent:#00bcd4; --edge:#333; }
+    * { box-sizing: border-box; }
     body {
-      background: #121212;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      text-align: center;
+      margin: 0; background: var(--bg); color: var(--ink); font-family: Arial, sans-serif;
+      padding-top: 80px; text-align: center;
     }
-    h1 {
-      color: #00bcd4;
-      margin-bottom: 1rem;
+    header.main-header {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background: var(--card); border-bottom: 2px solid var(--accent);
+      padding: 1rem 0; font-weight: 700; font-size: 1.1rem; z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,.6);
+    }
+    h1 { margin: 2rem 0 1rem; color: #f5f5f5; }
+    .grid {
+      display: grid; gap: 1.25rem; width: min(1100px, 92vw); margin: 0 auto 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
     .card {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin: 1rem auto;
-      width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
-      text-align: left;
+      background: var(--card); border: 1px solid var(--edge); border-radius: 12px;
+      padding: 1.25rem; text-align: left; box-shadow: 0 0 10px rgba(0,0,0,.6);
     }
-    .card h2 {
-      margin-top: 0;
-      color: #00bcd4;
+    .card h2 { margin: 0 0 .75rem; color: var(--accent); font-size: 1.1rem; }
+    .stat { margin: .35rem 0; font-size: 1rem; }
+    .banner {
+      margin: 2.25rem auto; width: min(1100px, 92vw);
+      background: linear-gradient(90deg, var(--accent), #9c27b0);
+      color: #fff; padding: 1rem 1.25rem; border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,.5); text-align: center; font-weight: 600;
     }
-    .stat { margin: 0.4rem 0; }
+    .muted { opacity: .85; font-size: .95rem; }
+    .hidden { display: none; }
+    footer { margin: 2rem 0 1rem; color: #bbb; font-size: .9rem; }
   </style>
 </head>
 <body>
-  <h1>Draxon – Predecessor Dashboard</h1>
+  <header class="main-header">Moksi Gaming — Draxon</header>
 
-  <!-- Algemene stats -->
-  <div class="card" id="general">
-    <h2>General Stats</h2>
-    <p id="matches">Matches:</p>
-    <p id="winrate">Winrate:</p>
-    <p id="kda">Average KDA:</p>
-    <p id="hours">Hours Played:</p>
+  <h1>Predecessor Stats</h1>
+  <div class="grid" id="pred-grid">
+    <div class="card" id="general">
+      <h2>General</h2>
+      <p class="stat" id="matches">Matches: </p>
+      <p class="stat" id="winrate">Winrate: </p>
+      <p class="stat" id="kda">Average KDA: </p>
+      <p class="stat" id="hours">Hours Played: </p>
+    </div>
+
+    <div class="card" id="heroes">
+      <h2>Top Hero</h2>
+      <p class="stat" id="hero">Fav. Hero: </p>
+      <p class="stat" id="hero-matches">Matches with Hero: </p>
+      <p class="stat" id="hero-winrate">Winrate with Hero: </p>
+    </div>
+
+    <div class="card" id="lastmatch">
+      <h2>Last Match</h2>
+      <p class="stat" id="match-id">Match ID: </p>
+      <p class="stat" id="match-mode">Mode: </p>
+      <p class="stat" id="match-hero">Hero Played: </p>
+      <p class="stat" id="match-result">Result: </p>
+    </div>
   </div>
 
-  <!-- Hero stats -->
-  <div class="card" id="heroes">
-    <h2>Top Hero</h2>
-    <p id="hero">Fav. Hero:</p>
-    <p id="hero-matches">Matches with Hero:</p>
-    <p id="hero-winrate">Winrate with Hero:</p>
+  <div class="banner">Switching Gear → Valorant</div>
+
+  <h1>Valorant (Draxon)</h1>
+  <div class="grid">
+    <div class="card hidden" id="val-card">
+      <h2>Profile</h2>
+      <p class="stat" id="val-rank">Rank: </p>
+      <p class="stat" id="val-kd">K/D: </p>
+      <p class="stat" id="val-win">Winrate: </p>
+      <p class="stat" id="val-matches">Matches: </p>
+      <p class="stat" id="val-agent">Top Agent: </p>
+    </div>
+    <div class="card" id="val-hint">
+      <h2>Heads up</h2>
+      <p class="stat muted">Valorant-data verschijnt hier zodra je Action een <code>data/valorant_draxon.json</code> heeft weggeschreven.</p>
+    </div>
   </div>
 
-  <!-- Laatste match -->
-  <div class="card" id="lastmatch">
-    <h2>Last Match</h2>
-    <p id="match-id">Match ID:</p>
-    <p id="match-mode">Mode:</p>
-    <p id="match-hero">Hero Played:</p>
-    <p id="match-result">Result:</p>
-  </div>
+  <footer id="updated" class="muted">Updated: —</footer>
 
   <script>
-    const playerId = "08aca0ad-a6ef-46c5-a765-e1b3abf659fb";
+    // Leest lokale JSON-bestanden die door je GitHub Action zijn weggeschreven.
+    // Pad is relatief, dus werkt op project pages zoals /Moksi-Gaming/
+    const predUrl = "./data/predecessor_draxon.json";
+    const valUrl  = "./data/valorant_draxon.json";
 
-    // Algemene stats
-    fetch(`http://omeda.city/players/${playerId}/statistics.json?time_frame=ALL`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("matches").textContent = `Matches: ${data.matches_played ?? 'N/A'}`;
-        document.getElementById("winrate").textContent = `Winrate: ${data.win_rate ?? 'N/A'}%`;
-        document.getElementById("kda").textContent = `Average KDA: ${data.average_kda ?? 'N/A'}`;
-        document.getElementById("hours").textContent = `Hours Played: ${data.total_playtime_hours ?? 'N/A'}`;
+    // Helper om label + waarde te zetten met N/A fallback
+    function setText(id, label, value, suffix="") {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const val = (value ?? value === 0) ? value : "N/A";
+      el.textContent = suffix ? `${label}: ${val}${val!=="N/A" ? suffix : ""}` : `${label}: ${val}`;
+    }
+
+    // Predecessor
+    fetch(predUrl)
+      .then(r => r.json())
+      .then(d => {
+        // General
+        setText("matches", "Matches", d?.general?.matches);
+        setText("winrate", "Winrate", d?.general?.winrate, "%");
+        setText("kda", "Average KDA", d?.general?.averageKDA);
+        setText("hours", "Hours Played", d?.general?.hoursPlayed);
+
+        // Top hero
+        setText("hero", "Fav. Hero", d?.topHero?.name);
+        setText("hero-matches", "Matches with Hero", d?.topHero?.matches);
+        setText("hero-winrate", "Winrate with Hero", d?.topHero?.winrate, "%");
+
+        // Last match
+        setText("match-id", "Match ID", d?.lastMatch?.matchId);
+        setText("match-mode", "Mode", d?.lastMatch?.mode);
+        setText("match-hero", "Hero Played", d?.lastMatch?.hero);
+        setText("match-result", "Result", d?.lastMatch?.result);
+
+        // Updated timestamp
+        const stamp = d?.generatedAt ? new Date(d.generatedAt).toLocaleString() : "—";
+        document.getElementById("updated").textContent = `Updated: ${stamp}`;
+      })
+      .catch(() => {
+        // Fallbacks als JSON (nog) niet bestaat
+        ["matches","winrate","kda","hours","hero","hero-matches","hero-winrate","match-id","match-mode","match-hero","match-result"]
+          .forEach(id => setText(id, document.getElementById(id).textContent.replace(/:.*/,""), null));
+        document.getElementById("updated").textContent = `Updated: —`;
       });
 
-    // Hero stats
-    fetch(`http://omeda.city/players/${playerId}/hero_statistics.json?time_frame=ALL`)
-      .then(res => res.json())
-      .then(heroes => {
-        if (heroes.length > 0) {
-          const top = heroes[0];
-          document.getElementById("hero").textContent = `Fav. Hero: ${top.hero_name ?? 'N/A'}`;
-          document.getElementById("hero-matches").textContent = `Matches with Hero: ${top.matches_played ?? 'N/A'}`;
-          document.getElementById("hero-winrate").textContent = `Winrate with Hero: ${top.win_rate ?? 'N/A'}%`;
-        } else {
-          document.getElementById("hero").textContent = "Fav. Hero: N/A";
-        }
-      });
+    // Valorant (optioneel)
+    fetch(valUrl)
+      .then(r => (r.ok ? r.json() : null))
+      .then(v => {
+        if (!v) return;
+        setText("val-rank", "Rank", v.rank);
+        setText("val-kd", "K/D", v.kd);
+        setText("val-win", "Winrate", v.winrate);
+        setText("val-matches", "Matches", v.matches);
+        setText("val-agent", "Top Agent", v.topAgent);
 
-    // Laatste match
-    fetch(`http://omeda.city/players/${playerId}/matches.json?per_page=1`)
-      .then(res => res.json())
-      .then(matches => {
-        if (matches.length > 0) {
-          const last = matches[0];
-          document.getElementById("match-id").textContent = `Match ID: ${last.match_id ?? 'N/A'}`;
-          document.getElementById("match-mode").textContent = `Mode: ${last.game_mode ?? 'N/A'}`;
-          document.getElementById("match-hero").textContent = `Hero Played: ${last.hero_name ?? 'N/A'}`;
-          document.getElementById("match-result").textContent = `Result: ${last.result ?? 'N/A'}`;
-        } else {
-          document.getElementById("match-id").textContent = "Match ID: N/A";
-        }
-      });
+        // Toon kaart en verberg hint zodra data bestaat
+        document.getElementById("val-card").classList.remove("hidden");
+        document.getElementById("val-hint").classList.add("hidden");
+      })
+      .catch(() => {/* laat de hint staan */});
   </script>
 </body>
 </html>
