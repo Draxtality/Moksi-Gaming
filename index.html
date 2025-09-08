@@ -66,7 +66,7 @@
     const playerId = "08aca0ad-a6ef-46c5-a765-e1b3abf659fb";
 
     // Algemene stats
-    fetch(`https://omeda.city/players/${playerId}/statistics.json?time_frame=ALL`)
+    fetch(`http://omeda.city/players/${playerId}/statistics.json?time_frame=ALL`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("matches").textContent = `Matches: ${data.matches_played ?? 'N/A'}`;
@@ -76,7 +76,7 @@
       });
 
     // Hero stats
-    fetch(`https://omeda.city/players/${playerId}/hero_statistics.json?time_frame=ALL`)
+    fetch(`http://omeda.city/players/${playerId}/hero_statistics.json?time_frame=ALL`)
       .then(res => res.json())
       .then(heroes => {
         if (heroes.length > 0) {
@@ -90,7 +90,7 @@
       });
 
     // Laatste match
-    fetch(`https://omeda.city/players/${playerId}/matches.json?per_page=1`)
+    fetch(`http://omeda.city/players/${playerId}/matches.json?per_page=1`)
       .then(res => res.json())
       .then(matches => {
         if (matches.length > 0) {
