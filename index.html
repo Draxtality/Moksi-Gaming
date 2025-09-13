@@ -1,83 +1,130 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Moksi Gaming — Valorant (Draxon)</title>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valorant – Agent Deadlock</title>
   <style>
-    :root { --bg:#121212; --card:#1e1e1e; --ink:#eee; --accent:#00bcd4; --edge:#333; }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,sans-serif; padding-top:72px; text-align:center; }
-    header { position:fixed; top:0; left:0; right:0; background:var(--card); border-bottom:2px solid var(--accent); padding:14px 0; font-weight:700; box-shadow:0 2px 10px rgba(0,0,0,.5); }
-    h1 { margin:24px 0 12px; }
-    .wrap { width:min(900px,92vw); margin:0 auto 32px; }
-    .card { background:var(--card); border:1px solid var(--edge); border-radius:12px; padding:16px 18px; text-align:left; box-shadow:0 0 10px rgba(0,0,0,.5); }
-    .card h2 { margin:0 0 10px; color:var(--accent); font-size:1.1rem; }
-    .stat { margin:.35rem 0; }
-    footer { margin:20px 0; color:#bbb; font-size:.9rem; }
+    :root{
+      --bg: #0e0f12;
+      --card: #151821;
+      --text: #e7e9ee;
+      --muted:#a7acb9;
+      --accent:#7aa2ff;
+      --radius:14px;
+    }
+    /* Dark + light auto */
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f6f7fb; --card:#ffffff; --text:#0e0f12; --muted:#485064; --accent:#335eea; }
+      body{ background: var(--bg); }
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.6;
+    }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    header{ margin-bottom: 20px; }
+    h1{
+      margin:0 0 8px;
+      font-size: clamp(1.4rem, 2.2vw, 2rem);
+      letter-spacing: .3px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      overflow: clip;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .agent{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .media{
+      position: relative;
+      aspect-ratio: 4/5;              /* netjes uitsnijden bij wisselende beelden */
+      overflow: hidden;
+    }
+    .media img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+    }
+    .content{
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .eyebrow{
+      font-size: .8rem;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    p{ margin: 0 0 12px; }
+    .note{
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: 14px;
+      border-top: 1px dashed rgba(255,255,255,.12);
+      padding-top: 12px;
+    }
+    /* Responsive: stapel op small screens */
+    @media (max-width: 820px){
+      .agent{ grid-template-columns: 1fr; }
+      .media{ aspect-ratio: 16/9; }
+    }
   </style>
 </head>
 <body>
-  <header>Moksi Gaming — Valorant (Draxon)</header>
-
   <div class="wrap">
-    <h1>Valorant Stats</h1>
-    <div class="card">
-      <h2>Profiel</h2>
-      <p class="stat" id="val-rank">Rank:</p>
-      <p class="stat" id="val-kd">K/D:</p>
-      <p class="stat" id="val-win">Winrate:</p>
-      <p class="stat" id="val-matches">Matches:</p>
-      <p class="stat" id="val-agent">Top Agent:</p>
-      <p class="stat" id="val-playlist">Playlist:</p>
-      <p class="stat" id="val-season">Season:</p>
-    </div>
+    <header>
+      <h1>Agent Deadlock</h1>
+      <div class="eyebrow">Valorant</div>
+    </header>
+
+    <section class="card agent">
+      <figure class="media">
+        <!-- VERVANG dit pad door jouw afbeelding, bv: images/deadlock.jpg -->
+        <img
+          src="images/deadlock.jpg"
+          alt="Valorant-agent Deadlock in een defensieve pose"
+          loading="lazy"
+          width="1200" height="1500">
+      </figure>
+
+      <article class="content">
+        <h2>Deadlock – Sentinel</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet
+          sapien non justo efficitur placerat. Proin vitae arcu a augue faucibus
+          vulputate. Curabitur at augue dignissim, bibendum leo et, ullamcorper
+          neque. Vivamus hendrerit massa vel nisi aliquet vestibulum. Morbi
+          pharetra volutpat diam, id maximus augue auctor eget.
+        </p>
+        <p>
+          Integer a lorem vitae sem hendrerit pretium. Aliquam erat volutpat.
+          Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+          posuere cubilia curae; Mauris sagittis, magna non egestas fermentum,
+          nibh nisi iaculis nunc, nec bibendum arcu nisl sit amet urna.
+        </p>
+
+        <div class="note">
+          Tip: zet je afbeelding in <code>/images/deadlock.jpg</code> of pas het
+          <code>src</code>-attribuut hierboven aan naar jouw pad/bestandsnaam.
+        </div>
+      </article>
+    </section>
   </div>
-
-  <footer id="updated">Updated: —</footer>
-
-  <script>
-    // Laadt lokale JSON die door jouw Action / handmatig is geplaatst.
-    const cacheBust = '?v=' + Date.now();
-    const valUrl = './data/valorant_draxon.json' + cacheBust;
-
-    const isNumeric = (v) => typeof v === 'number' || (!!v && !isNaN(parseFloat(v)));
-    function setText(id, label, value, suffix = '') {
-      const el = document.getElementById(id);
-      if (!el) return;
-      let out = 'N/A';
-      if (value !== undefined && value !== null && value !== '') {
-        if (suffix && isNumeric(value) && String(value).indexOf('%') === -1) {
-          out = `${value}${suffix}`;
-        } else {
-          out = value;
-        }
-      }
-      el.textContent = `${label}: ${out}`;
-    }
-
-    fetch(valUrl)
-      .then(r => r.json())
-      .then(v => {
-        setText('val-rank', 'Rank', v.rank);
-        setText('val-kd', 'K/D', v.kd);
-        setText('val-win', 'Winrate', v.winrate);         // voeg geen extra % toe als het al "52%" is
-        setText('val-matches', 'Matches', v.matches);
-        setText('val-agent', 'Top Agent', v.topAgent);
-        setText('val-playlist', 'Playlist', v?.filters?.playlist || 'N/A');
-        setText('val-season', 'Season', v?.filters?.season || 'N/A');
-
-        document.getElementById('updated').textContent =
-          'Updated: ' + (v.generatedAt ? new Date(v.generatedAt).toLocaleString() : '—');
-      })
-      .catch(() => {
-        // Laat labels staan met N/A als het bestand (nog) niet bestaat
-        ['val-rank','val-kd','val-win','val-matches','val-agent','val-playlist','val-season']
-          .forEach(id => {
-            const label = document.getElementById(id).textContent.split(':')[0];
-            document.getElementById(id).textContent = `${label}: N/A`;
-          });
-      });
-  </script>
 </body>
 </html>
