@@ -22,12 +22,12 @@
       max-width: 900px;
       margin: 60px auto;
       box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      gap: 30px;
     }
 
     .card img {
       max-width: 280px;
       border-radius: 8px;
-      margin-right: 30px;
     }
 
     .text {
@@ -37,6 +37,21 @@
     .text h1 {
       color: #ff4655;
       margin-top: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .card {
+        flex-direction: column; /* Zet alles onder elkaar */
+        text-align: center;
+      }
+      .card img {
+        margin: 0 0 20px 0;
+        max-width: 80%;
+      }
+      .text {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
