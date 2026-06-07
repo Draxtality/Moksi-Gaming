@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T13:40:21.826Z",
+  "generatedAt": "2026-06-07T15:20:10.157Z",
   "riotId": "Back to Draxon#hoi",
   "filters": {
     "playlist": "competitive",
@@ -11,5 +11,5 @@
   "matches": null,
   "topAgent": null,
   "source": "none",
-  "error": "Henrik MMR 401"
+  "error": "fetch failed"
 }
